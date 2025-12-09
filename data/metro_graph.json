@@ -1,0 +1,16 @@
+{
+  "stations": ["A", "B", "C", "D", "E", "F", "G", "H"],
+  "edges": [
+    { "from": "A", "to": "B", "time": 3, "line": "M1" },
+    { "from": "B", "to": "C", "time": 5, "line": "M1" },
+    { "from": "C", "to": "D", "time": 4, "line": "M1" },
+    { "from": "D", "to": "E", "time": 6, "line": "M1" },
+
+    { "from": "B", "to": "F", "time": 4, "line": "M2" },
+    { "from": "F", "to": "G", "time": 3, "line": "M2" },
+    { "from": "G", "to": "D", "time": 5, "line": "M2" },
+
+    { "from": "C", "to": "H", "time": 7, "line": "M3" },
+    { "from": "H", "to": "E", "time": 4, "line": "M3" }
+  ]
+}

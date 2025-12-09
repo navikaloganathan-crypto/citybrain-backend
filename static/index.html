@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CityBrain Demo</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+    h1 {
+      margin-bottom: 4px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+    label {
+      display: inline-block;
+      margin: 4px 0;
+    }
+    input, select, button {
+      margin: 4px 0;
+      padding: 4px 6px;
+    }
+    pre {
+      background: #f7f7f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    #route-summary {
+      font-weight: 500;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>CityBrain Backend Tester</h1>
+  <p>Talking to: <code>http://127.0.0.1:8001</code></p>
+
+  <!-- 1. Stations -->
+  <div class="card">
+    <h2>1. Stations</h2>
+    <button onclick="loadStations()">Load stations</button>
+    <p id="stations"></p>
+  </div>
+
+  <!-- 2. Route details -->
+  <div class="card">
+    <h2>2. Route details</h2>
+    <label>Origin:
+      <select id="origin"></select>
+    </label>
+    <br />
+    <label>Destination:
+      <select id="destination"></select>
+    </label>
+    <br />
+    <button onclick="loadRouteDetails()">Get route details</button>
+    <p id="route-summary"></p>
+    <pre id="route-output"></pre>
+  </div>
+
+  <!-- 3. Best museum trip -->
+  <div class="card">
+    <h2>3. Best museum trip</h2>
+    <label>Origin:
+      <select id="museum-origin"></select>
+    </label>
+    <br />
+    <button onclick="loadBestMuseumTrip()">Find best museum trip</button>
+    <pre id="museum-output"></pre>
+  </div>
+
+  <script>
+    const BASE_URL = "http://127.0.0.1:8001";
+
+    // Fill dropdowns with stations on page load
+    async function initStations() {
+      try {
+        const res = await fetch(`${BASE_URL}/stations`);
+        const data = await res.json();
+        const stations = data.stations || [];
+
+        const originSel = document.getElementById("origin");
+        const destSel = document.getElementById("destination");
+        const museumSel = document.getElementById("museum-origin");
+
+        // Clear any existing options
+        [originSel, destSel, museumSel].forEach(sel => {
+          sel.innerHTML = "";
+        });
+
+        // Add options
+        stations.forEach(st => {
+          originSel.add(new Option(st, st));
+          destSel.add(new Option(st, st));
+          museumSel.add(new Option(st, st));
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load stations for dropdowns");
+      }
+    }
+
+    // Button 1 – show list of stations as text
+    async function loadStations() {
+      try {
+        const res = await fetch(`${BASE_URL}/stations`);
+        const data = await res.json();
+        document.getElementById("stations").textContent =
+          (data.stations || []).join(", ");
+      } catch (err) {
+        console.error(err);
+        document.getElementById("stations").textContent = "Error loading stations";
+      }
+    }
+
+    // Button 2 – route details + pretty summary
+    async function loadRouteDetails() {
+      const origin = document.getElementById("origin").value;
+      const destination = document.getElementById("destination").value;
+      const out = document.getElementById("route-output");
+      const summary = document.getElementById("route-summary");
+
+      out.textContent = "Loading...";
+      summary.textContent = "";
+
+      try {
+        const res = await fetch(
+          `${BASE_URL}/route/details?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`
+        );
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+
+        if (data.path && data.total_time != null) {
+          summary.textContent =
+            `Best route: ${data.path.join(" → ")}  |  Time: ${data.total_time} min  |  Transfers: ${data.transfers}`;
+        } else if (data.detail) {
+          summary.textContent = `Error: ${data.detail}`;
+        }
+      } catch (err) {
+        console.error(err);
+        out.textContent = "Error loading route details";
+        summary.textContent = "Error loading route details";
+      }
+    }
+
+    // Button 3 – best museum trip
+    async function loadBestMuseumTrip() {
+      const origin = document.getElementById("museum-origin").value;
+      const out = document.getElementById("museum-output");
+      out.textContent = "Loading...";
+
+      try {
+        const res = await fetch(
+          `${BASE_URL}/tour/best-museum-trip?origin=${encodeURIComponent(origin)}`
+        );
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        console.error(err);
+        out.textContent = "Error loading museum trip";
+      }
+    }
+
+    // Run once when page loads
+    initStations();
+  </script>
+</body>
+</html>

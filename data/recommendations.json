@@ -1,0 +1,48 @@
+{
+  "A": [
+    {
+      "name": "Central Museum",
+      "type": "museum",
+      "rating": 4.7,
+      "walk_minutes": 5
+    },
+    {
+      "name": "Riverside Park",
+      "type": "park",
+      "rating": 4.5,
+      "walk_minutes": 8
+    }
+  ],
+  "B": [
+    {
+      "name": "City Library",
+      "type": "library",
+      "rating": 4.6,
+      "walk_minutes": 4
+    }
+  ],
+  "C": [
+    {
+      "name": "Art Gallery C",
+      "type": "gallery",
+      "rating": 4.8,
+      "walk_minutes": 6
+    }
+  ],
+  "D": [
+    {
+      "name": "Science Center",
+      "type": "museum",
+      "rating": 4.9,
+      "walk_minutes": 7
+    }
+  ],
+  "E": [
+    {
+      "name": "Old Town Square",
+      "type": "landmark",
+      "rating": 4.7,
+      "walk_minutes": 3
+    }
+  ]
+}
